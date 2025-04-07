@@ -11,6 +11,19 @@ $ gst-launch-1.0 udpsrc uri="udp://229.1.1.1:3200" ! queue \
 ```
 ### For secure trasfering:
 
+## Build:
+Clone or download the repository to gst_mpegts_crypt
+```
+$ cd gst_mpegts_crypt
+$ sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev build-essential libdvbcsa-dev
+$ mkdir build
+$ cmake ..
+$ make -j$(nproc)
+
+#Check if it works
+$ gst-inspect-1.0 mpegtscrypt
+```
+
 #### In Server:
 ```
 $ gst-launch-1.0 udpsrc uri="udp://229.1.1.1:3200" ! queue \
