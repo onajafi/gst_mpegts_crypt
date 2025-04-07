@@ -54,6 +54,9 @@ static GType gst_mpegtscrypt_method_get_type (void)
     if (!mpegtscrypt_method_type) {
         static GEnumValue pattern_types[] = {
             { MPEGTSCRYPT_METHOD_BISS ,       "BISS Method", "biss" },
+            { MPEGTSCRYPT_METHOD_BISS_V2_1 ,  "BISS v2 Mode-1 Method", "biss_v2_mode_1" },
+            // { MPEGTSCRYPT_METHOD_BISS_V2_E ,  "BISS v2 Mode-E Method", "biss_v2_mode_e" },
+            // { MPEGTSCRYPT_METHOD_BISS_V2_CA , "BISS v2 Mode-CA Method", "biss_v2_mode_ca" },
             { MPEGTSCRYPT_METHOD_AES128_ECB , "AES128 ECB Method", "aes128_ecb" },
             { MPEGTSCRYPT_METHOD_AES128_CBC , "AES128 CBC Method", "aes128_cbc" },
             { MPEGTSCRYPT_METHOD_AES256_ECB , "AES256 ECB Method", "aes256_ecb" },
@@ -304,6 +307,15 @@ static GstFlowReturn gst_mpegts_crypt_chain (GstPad * pad, GstObject * parent, G
             case MPEGTSCRYPT_METHOD_BISS:
                 crypt_packet_biss(filter, map.data);
                 break;
+            case MPEGTSCRYPT_METHOD_BISS_V2_1:
+                crypt_packet_biss_v2(filter, map.data);
+                break;
+            // case MPEGTSCRYPT_METHOD_BISS_V2_E:
+            //     crypt_packet_biss_v2(filter, map.data);
+            //     break;
+            // case MPEGTSCRYPT_METHOD_BISS_V2_CA:
+            //     crypt_packet_biss_v2(filter, map.data);
+            //     break;
             case MPEGTSCRYPT_METHOD_AES128_ECB:
             case MPEGTSCRYPT_METHOD_AES128_CBC:
             case MPEGTSCRYPT_METHOD_AES256_ECB:

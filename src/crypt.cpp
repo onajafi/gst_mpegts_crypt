@@ -78,6 +78,23 @@ bool _init_biss_key(GstMpegtsCrypt*filter,  string key_str)
     GST_DEBUG_OBJECT(filter, "Init BISS key");
     return true;
 }
+bool _init_biss_v2_key(GstMpegtsCrypt*filter,  string key_str)
+{
+    if (key_str.size() > 2 && key_str[0] == '0' && key_str[1] == 'x')
+        key_str = key_str.substr(2);
+
+    uint8_t cissa_key[16];
+    // (32 symbols, 16 bytes)
+    if (_decode_hex_string(key_str.c_str(), cissa_key, key_str.size()) < 0) {
+        GST_ERROR_OBJECT(filter, "Invalid hex string for BISS key.");
+        return false;
+    }
+    
+    filter->biss_cissa_key.set_word(cissa_key);
+    GST_DEBUG_OBJECT(filter, "Init BISS-V2 Mode-1 key");
+    return true;
+}
+
 // copy from libtsfuncs
 uint8_t ts_packet_get_payload_offset(uint8_t *ts_packet) {
     if (ts_packet[0] != 0x47)
@@ -165,6 +182,14 @@ void crypt_packet_biss(GstMpegtsCrypt* filter, uint8_t *ts_packet) {
         }else GST_WARNING_OBJECT(filter, "Ts packet is not scrambled");
     }
 }
+void crypt_packet_biss_v2(GstMpegtsCrypt* filter, uint8_t *ts_packet) {
+    static bool key_idx = 0;
+
+    if(filter->operation == MPEGTSCRYPT_OPERATION_ENC){//Scramble
+    }else{//Unscramble
+        filter->biss_cissa_key.descramble_packet(ts_packet);
+    }
+}
 void crypt_finish(GstMpegtsCrypt* filter)
 {
     GST_DEBUG_OBJECT(filter, "Finish crypto");
@@ -187,6 +212,17 @@ void crypt_init(GstMpegtsCrypt* filter)
             filter->biss_csakey[0] = dvbcsa_key_alloc();
             filter->biss_csakey[1] = dvbcsa_key_alloc();
             _init_biss_key(filter, string(filter->key) );
+            break;
+        case MPEGTSCRYPT_METHOD_BISS_V2_1: 
+            filter->biss_version = 2;
+            filter->biss_mode = MPEGTSCRYPT_BISS_MODE_1;
+            _init_biss_v2_key(filter, string(filter->key) );
+            break;
+        case MPEGTSCRYPT_METHOD_BISS_V2_E: 
+            // To be implemented...
+            break;
+        case MPEGTSCRYPT_METHOD_BISS_V2_CA: 
+            // To be implemented...
             break;
 
         case MPEGTSCRYPT_METHOD_AES128_ECB:

@@ -22,9 +22,11 @@
 #pragma onc;
 #include <gst/gst.h>
 #include "gstmpegtscrypt.hpp"
+#include "dvbcissa.hpp"
 
 #define CODEWORD_LENGTH 16
 #define BISSKEY_LENGTH 6
+#define CISSA_KEY_LENGTH 16
 extern "C" {
 // include C functions from <dvbcsa/dvbcsa.h>
     typedef unsigned char		dvbcsa_cw_t[8];
@@ -42,3 +44,4 @@ void crypt_finish(GstMpegtsCrypt* filter);
         
 void crypt_packet_aes(GstMpegtsCrypt* filter, unsigned char *ts_packet);
 void crypt_packet_biss(GstMpegtsCrypt* filter, unsigned char *ts_packet);
+void crypt_packet_biss_v2(GstMpegtsCrypt* filter, unsigned char *ts_packet);

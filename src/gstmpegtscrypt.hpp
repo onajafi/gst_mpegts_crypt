@@ -56,6 +56,9 @@ enum
 };
 typedef enum {
     MPEGTSCRYPT_METHOD_BISS,
+    MPEGTSCRYPT_METHOD_BISS_V2_1,
+    MPEGTSCRYPT_METHOD_BISS_V2_E,
+    MPEGTSCRYPT_METHOD_BISS_V2_CA,
     MPEGTSCRYPT_METHOD_AES128_ECB,
     MPEGTSCRYPT_METHOD_AES128_CBC,
     MPEGTSCRYPT_METHOD_AES256_ECB,
@@ -65,6 +68,11 @@ typedef enum {
     MPEGTSCRYPT_OPERATION_DEC,
     MPEGTSCRYPT_OPERATION_ENC
 } GstMpegTsCryptOperation;
+typedef enum {
+    MPEGTSCRYPT_BISS_MODE_1,
+    MPEGTSCRYPT_BISS_MODE_E,
+    MPEGTSCRYPT_BISS_MODE_CA
+} GstMpegTsCryptBissMode;
 
 struct _GstMpegtsCrypt
 {
@@ -75,7 +83,7 @@ struct _GstMpegtsCrypt
 
   GstMpegTsCryptMethod method;
   GstMpegTsCryptOperation operation;
-   gchar key[256];
+  gchar key[256];
   gboolean init_crypt;
   
   // BISS key
@@ -85,6 +93,12 @@ struct _GstMpegtsCrypt
   AES_KEY   aes_dec_key;
   unsigned char aes_iv_enc[AES_BLOCK_SIZE];
   unsigned char aes_iv_dec[AES_BLOCK_SIZE];
+
+  // BISS parameters
+  int biss_version;
+  GstMpegTsCryptBissMode biss_mode;
+
+  dvbcissa_key_t biss_cissa_key;
 
 };
 
